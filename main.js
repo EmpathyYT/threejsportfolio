@@ -132,6 +132,7 @@ async function loadAssets() {
 }
 
 async function setUpBootText() {
+  isPcOn = true;
 	const canvas = document.createElement("canvas");
 	const context = canvas.getContext("2d");
 	canvas.width = 2048;
