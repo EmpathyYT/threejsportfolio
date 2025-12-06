@@ -15,3 +15,7 @@ export const bootSequence = [
 	"> [RNDR]  Frame loop initiated.",
 	"> _", //15 entries
 ];
+
+export const monitorWidth = 2048;
+export const monitorHeight = 1170;
+export const monitorPxSize = 80;

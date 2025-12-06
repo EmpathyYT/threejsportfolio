@@ -17,6 +17,7 @@ render();
 
 async function setUpSpace() {
 	renderer = new THREE.WebGLRenderer({ antialias: true });
+	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 	mouse = new THREE.Vector2();
 	scene = new THREE.Scene();
 	camera = new THREE.PerspectiveCamera(

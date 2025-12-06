@@ -23,3 +23,22 @@ export async function loadAssets() {
 
 }
 
+export function cleanMemory(object3d) {
+	object3d.traverse((x) => {
+		if (x.isMesh) {
+			x.geometry.dispose();
+			if (x.material.isMaterial) {
+				cleanMaterial(x.material);
+			} else {
+				for (const material of x.material) {
+					cleanMaterial(material);
+				}
+			}
+		}
+	});
+}
+
+export function cleanScene(scene) {
+	cleanMemory(scene);
+	scene.clear();
+}
