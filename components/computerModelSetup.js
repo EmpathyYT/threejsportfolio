@@ -1,7 +1,8 @@
-import { wait } from "../utils/extra.js";
+import { wait, setCanvasSizes } from "../utils/extra.js";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
-import {bootSequence, monitorHeight, monitorWidth, monitorPxSize} from "../constants/constants.js";
+import {bootSequence, monitorPxSize} from "../constants/constants.js";
 import * as THREE from "three";
+let screenMeshMaterial;
 
 export default function setUpComputerModel(scene) {
 	const loader = new GLTFLoader();
@@ -10,54 +11,56 @@ export default function setUpComputerModel(scene) {
 		computer.position.set(0, 0.2, 1.2);
 		computer.rotation.z = Math.PI;
 		scene.add(computer);
+		computer.traverse((x) => {
+			if (x.isMesh && x.material.name === "Screen") {
+				setUpScreenMaterial(x);
+			}
+		})
 	});
 }
 
-export function setUpBootText(scene) {
+export function setUpBootText() {
 	const canvas = document.createElement("canvas");
-
 	const context = canvas.getContext("2d");
-	setCanvasSizes(canvas);
 
+	setCanvasSizes(canvas);
+	
 	const texture = new THREE.CanvasTexture(canvas);
+
+	screenMeshMaterial.color = new THREE.Color(0xffffff);
+	screenMeshMaterial.emissive = new THREE.Color(0xffffff);
+	
+	screenMeshMaterial.map.dispose(); //the emissive map is the same texture so no need to dispose both
+
+	screenMeshMaterial.map = texture;
+	screenMeshMaterial.emissiveMap = texture
+
+	texture.colorSpace = THREE.SRGBColorSpace;
+	texture.flipY = false;
 	texture.anisotropy = 16;
 
-	const geometry = new THREE.PlaneGeometry(0.7, 0.35);
-	const material = new THREE.MeshStandardMaterial({
-		map: texture,
-		emissive: 0x000000,
-		emissiveIntensity: 5,
-		emissiveMap: texture,
-		color: 0xffffff,
-		side: THREE.DoubleSide,
-	});
-
-	const plane = new THREE.Mesh(geometry, material);
-	plane.name = "screen";
-	plane.position.set(0.0, 0.67, 0.9);
-	plane.rotation.y = -Math.PI;
 	context.fillStyle = "black";
 	context.fillRect(0, 0, canvas.width, canvas.height);
+
 	context.fillStyle = "white";
+
 	texture.magFilter = THREE.NearestFilter;
 	texture.minFilter = THREE.NearestFilter;
 
-	context.imageSmoothingEnabled = false;
-
-	texture.needsUpdate = true;
-	
+	context.imageSmoothingEnabled = false;	
 	context.font = `${monitorPxSize}px VT323`;
-	scene.add(plane);
 
 	const abortBoot = new AbortController();
 
+	texture.needsUpdate = true;
+
 	bootTextGenerator(texture, context, canvas, abortBoot);
-	return [abortBoot, plane];
+	return [abortBoot, screenMeshMaterial];
 }
 
 async function bootTextGenerator(texture, context, canvas, abortBoot) {
 	const buffer = [];
-	let max_buffer_size = 10; // max lines on a screen
+	let max_buffer_size = 14; // max lines on a screen
 
 	// pre-fill the first text to avoid waiting
 	let text = bootSequence[0];
@@ -70,7 +73,6 @@ async function bootTextGenerator(texture, context, canvas, abortBoot) {
 		await wait(100 + Math.random() * 2000);
 		if (abortBoot.signal.aborted) return;
 		let text = bootSequence[i];
-
 		if (i >= max_buffer_size) {
 			buffer.shift();
 			rebuildScreen(context, canvas, buffer);
@@ -166,12 +168,26 @@ async function loadScreenOS(context, canvas, texture, abortBoot) {
 	}
 }
 
-export function setCanvasSizes(canvas) {
-	let context = canvas.getContext("2d");
-	const scale = window.devicePixelRatio;
-	canvas.style.width = `${monitorWidth}px`;
-	canvas.style.height = `${monitorHeight}px`;
-	canvas.width = Math.floor(monitorWidth * scale);
-	canvas.height = Math.floor(monitorHeight * scale);
-	context.scale(scale, scale);
+function setUpScreenMaterial(object) {
+	/* 
+	since the shader program actually optimizes the textures and materials we need to 
+	add a dummy texture otherwise no matter what it won't accept a texture map.
+
+	even though it's technically mutable, after creation it kinda becomes immutable
+
+	just wanna lyk it took me 4 hours to find out why switching the map didn't work
+	*/
+	const dummyTexture = new THREE.Texture();
+	const material = new THREE.MeshPhysicalMaterial({
+		map: dummyTexture,
+		emissiveMap: dummyTexture,
+		emissive: 0x000000,
+		emissiveIntensity: 0.5,
+		color: 0x000000,
+		side: THREE.DoubleSide,
+		clearcoat: 0.5
+	});
+
+	object.material = material;
+	screenMeshMaterial = material;
 }

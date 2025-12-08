@@ -5,7 +5,7 @@ import * as THREE from "three";
 
 const raycaster = new THREE.Raycaster();
 let abortBoot = null,
-	plane = null;
+	screenMeshMaterial = null;
 
 export function setUpHooks(controls, mouse, camera, scene, renderer) {
 	preloadHooks();
@@ -59,7 +59,7 @@ window.existingClickHandler = function (controls, mouse, camera, scene) {
 
 	if (intersects.length > 0) {
 		if (intersects[0].object.name === powerHitboxName) {
-			bootLoadingHook(scene);
+			bootLoadingHook();
 		}
 	}
 };
@@ -68,13 +68,21 @@ function controlLockHook(controls) {
 	controls.lock();
 }
 
-function bootLoadingHook(scene) {
+function bootLoadingHook() {
 	if (abortBoot == null) {
-		[abortBoot, plane] = setUpBootText(scene);
+		[abortBoot, screenMeshMaterial] = setUpBootText();
 	} else {
+		const dummyTexture = new THREE.Texture();
+
 		abortBoot.abort();
-		cleanMemory(plane);
-		plane.removeFromParent();
+		screenMeshMaterial.color = new THREE.Color(0x000000);
+		screenMeshMaterial.emissive = new THREE.Color(0x000000);
+		
+		screenMeshMaterial.map.dispose();
+
+		screenMeshMaterial.map = dummyTexture;
+		screenMeshMaterial.emissiveMap = dummyTexture;
+
 		abortBoot = null;
 	}
 }

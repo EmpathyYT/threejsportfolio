@@ -1,3 +1,4 @@
+import {monitorWidth, monitorHeight} from "../constants/constants.js";
 
 export function wait(time) {
   return new Promise((resolve) => setTimeout(() => {resolve()}, time));
@@ -41,4 +42,10 @@ export function cleanMemory(object3d) {
 export function cleanScene(scene) {
 	cleanMemory(scene);
 	scene.clear();
+}
+
+export function setCanvasSizes(canvas) {
+	const textureResolution = 1024 * 2;
+	canvas.width = textureResolution;
+	canvas.height = textureResolution;
 }
