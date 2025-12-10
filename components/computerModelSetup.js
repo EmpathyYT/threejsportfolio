@@ -1,60 +1,69 @@
 import { wait, setCanvasSizes } from "../utils/extra.js";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
-import {bootSequence, monitorPxSize} from "../constants/constants.js";
+import {
+	bootSequence,
+	monitorPxSize,
+	computerModelName,
+} from "../constants/constants.js";
+import setUpHitBoxes, {toggleButtonVisibility } from "./hitboxSetup.js";
 import * as THREE from "three";
+import * as lil from "lil-gui";
 let screenMeshMaterial;
 
 export default function setUpComputerModel(scene) {
 	const loader = new GLTFLoader();
 	loader.load("models/personal_computer/pc.glb", function (gltf) {
 		const computer = gltf.scene.children[0];
+		computer.name = computerModelName;
 		computer.position.set(0, 0.2, 1.2);
 		computer.rotation.z = Math.PI;
+
 		scene.add(computer);
+
 		computer.traverse((x) => {
 			if (x.isMesh && x.material.name === "Screen") {
 				setUpScreenMaterial(x);
 			}
-		})
+		});
+		setUpHitBoxes(scene);
 	});
 }
 
-export function setUpBootText() {
+export async function setUpBootText() {
 	const canvas = document.createElement("canvas");
 	const context = canvas.getContext("2d");
 
 	setCanvasSizes(canvas);
-	
+
 	const texture = new THREE.CanvasTexture(canvas);
 
 	screenMeshMaterial.color = new THREE.Color(0xffffff);
 	screenMeshMaterial.emissive = new THREE.Color(0xffffff);
-	
+
 	screenMeshMaterial.map.dispose(); //the emissive map is the same texture so no need to dispose both
 
 	screenMeshMaterial.map = texture;
-	screenMeshMaterial.emissiveMap = texture
+	screenMeshMaterial.emissiveMap = texture;
 
 	texture.colorSpace = THREE.SRGBColorSpace;
 	texture.flipY = false;
 	texture.anisotropy = 16;
 
-	context.fillStyle = "black";
-	context.fillRect(0, 0, canvas.width, canvas.height);
+	resetCanvas(canvas);
 
 	context.fillStyle = "white";
 
 	texture.magFilter = THREE.NearestFilter;
 	texture.minFilter = THREE.NearestFilter;
 
-	context.imageSmoothingEnabled = false;	
+	context.imageSmoothingEnabled = false;
 	context.font = `${monitorPxSize}px VT323`;
 
 	const abortBoot = new AbortController();
 
 	texture.needsUpdate = true;
-
-	bootTextGenerator(texture, context, canvas, abortBoot);
+	// bootTextGenerator(texture, context, canvas, abortBoot);
+	setUpDesktop(abortBoot)
 	return [abortBoot, screenMeshMaterial];
 }
 
@@ -80,7 +89,11 @@ async function bootTextGenerator(texture, context, canvas, abortBoot) {
 
 		const waitTime = categorizeBootMessage(text, context);
 
-		context.fillText(text, 50, (monitorPxSize + 10) * Math.min(i + 1, max_buffer_size));
+		context.fillText(
+			text,
+			50,
+			(monitorPxSize + 10) * Math.min(i + 1, max_buffer_size)
+		);
 		buffer.push({ line: text, color: context.fillStyle });
 		texture.needsUpdate = true;
 		await wait(waitTime);
@@ -89,30 +102,11 @@ async function bootTextGenerator(texture, context, canvas, abortBoot) {
 }
 
 function rebuildScreen(context, canvas, buffer) {
-	context.fillStyle = "black";
-	context.fillRect(0, 0, canvas.width, canvas.height);
+	resetCanvas(canvas);
 	for (let k = 0; k < buffer.length; k++) {
 		let data = buffer[k];
 		context.fillStyle = data["color"];
 		context.fillText(data["line"], 50, (monitorPxSize + 10) * k + 1);
-	}
-}
-
-function categorizeBootMessage(line, context) {
-	let event_code = line.slice(3, line.indexOf("]"));
-	switch (event_code) {
-		case "WARN":
-			context.fillStyle = "#ff9100ff";
-			return 700;
-		case "CRIT":
-			context.fillStyle = "red";
-			return 700;
-		case "FIX":
-			context.fillStyle = "green";
-			return 0;
-		default:
-			context.fillStyle = "white";
-			return 0;
 	}
 }
 
@@ -135,8 +129,7 @@ async function flashCursor(context, canvas, buffer, texture, abortBoot) {
 async function loadScreenOS(context, canvas, texture, abortBoot) {
 	if (abortBoot.signal.aborted) return;
 
-	context.fillStyle = "black";
-	context.fillRect(0, 0, canvas.width, canvas.height);
+	resetCanvas(canvas);
 	context.fillStyle = "white";
 	let text = "Loading BootOS...";
 	let textWidth = context.measureText(text).width;
@@ -166,7 +159,19 @@ async function loadScreenOS(context, canvas, texture, abortBoot) {
 		);
 		texture.needsUpdate = true;
 	}
+	await setUpDesktop(abortBoot);
+
 }
+
+async function setUpDesktop(abortBoot) {
+	const desktopImg = await new THREE.TextureLoader().loadAsync("/pictures/pic.jpg");
+	desktopImg.flipY = false;
+	screenMeshMaterial.map = desktopImg;
+	screenMeshMaterial.emissiveMap = desktopImg;
+
+	toggleButtonVisibility();
+}
+
 
 function setUpScreenMaterial(object) {
 	/* 
@@ -182,12 +187,36 @@ function setUpScreenMaterial(object) {
 		map: dummyTexture,
 		emissiveMap: dummyTexture,
 		emissive: 0x000000,
-		emissiveIntensity: 0.5,
+		emissiveIntensity: 0.3,
 		color: 0x000000,
 		side: THREE.DoubleSide,
-		clearcoat: 0.5
+		clearcoat: 0.5,
 	});
 
 	object.material = material;
 	screenMeshMaterial = material;
+}
+
+function categorizeBootMessage(line, context) {
+	let event_code = line.slice(3, line.indexOf("]"));
+	switch (event_code) {
+		case "WARN":
+			context.fillStyle = "#ff9100ff";
+			return 700;
+		case "CRIT":
+			context.fillStyle = "red";
+			return 700;
+		case "FIX":
+			context.fillStyle = "green";
+			return 0;
+		default:
+			context.fillStyle = "white";
+			return 0;
+	}
+}
+
+function resetCanvas(canvas) {
+	const context = canvas.getContext("2d");
+	context.fillStyle = "black";
+	context.fillRect(0, 0, canvas.width, canvas.height);
 }

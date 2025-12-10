@@ -18,7 +18,7 @@ export function cleanMaterial(material) {
 }
 
 export async function loadAssets() {
-	const font = new FontFace("VT323", "url('/public/fonts/VT323.ttf')");
+	const font = new FontFace("VT323", "url('/fonts/VT323.ttf')");
 	await font.load();
 	document.fonts.add(font);
 
@@ -48,4 +48,24 @@ export function setCanvasSizes(canvas) {
 	const textureResolution = 1024 * 2;
 	canvas.width = textureResolution;
 	canvas.height = textureResolution;
+}
+
+export function addChild(scene, objtoAdd, nameOfParent) {
+	const children = scene.children;
+	for (const child of children) {
+		if (child.name === nameOfParent) {
+			child.add(objtoAdd);
+		}
+	}
+}
+
+export function setTextToHitMarker(text) {
+	const p = document.getElementById('hitmarkerText');
+	p.textContent = text;
+	p.classList.remove('opacity-0');
+}
+
+export function removeTextFromHitMarket() {
+	const text = document.getElementById('hitmarkerText');
+	text.classList.add('opacity-0');
 }

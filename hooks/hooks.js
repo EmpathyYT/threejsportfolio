@@ -1,11 +1,13 @@
-import { powerHitboxName } from "../components/hitboxes/bootHitbox";
-import { setUpBootText } from "../components/computerModelSetup";
-import { cleanMemory, cleanScene } from "../utils/extra";
+import { cleanScene, removeTextFromHitMarket, setTextToHitMarker } from "../utils/extra";
+import { hitboxesActive } from "../components/hitboxSetup";
 import * as THREE from "three";
 
 const raycaster = new THREE.Raycaster();
-let abortBoot = null,
-	screenMeshMaterial = null;
+let aimedAt;
+let hookData = {
+	abortBoot: null,
+	screenMeshMaterial: null
+}
 
 export function setUpHooks(controls, mouse, camera, scene, renderer) {
 	preloadHooks();
@@ -16,7 +18,7 @@ export function setUpHooks(controls, mouse, camera, scene, renderer) {
 	);
 	window.addEventListener(
 		"click",
-		() => window.existingClickHandler(controls, mouse, camera, scene),
+		() => window.existingClickHandler(controls, mouse, camera),
 		false
 	);
 	document.addEventListener("click", () => controlLockHook(controls));
@@ -48,18 +50,15 @@ window.existingResizeHandler = function (camera, renderer) {
 	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 };
 
-window.existingClickHandler = function (controls, mouse, camera, scene) {
+window.existingClickHandler = function (controls, mouse, camera) {
 	if (!controls.isLocked) return;
 
-	mouse.x = 0;
-	mouse.y = 0;
-
-	raycaster.setFromCamera(mouse, camera);
-	const intersects = raycaster.intersectObjects(scene.children);
+	const intersects = raycaster.intersectObjects(hitboxesActive, true);
 
 	if (intersects.length > 0) {
-		if (intersects[0].object.name === powerHitboxName) {
-			bootLoadingHook();
+		const object = intersects[0].object;
+		if (object.userData.onClick) {
+			object.userData.onClick(hookData);
 		}
 	}
 };
@@ -68,21 +67,26 @@ function controlLockHook(controls) {
 	controls.lock();
 }
 
-function bootLoadingHook() {
-	if (abortBoot == null) {
-		[abortBoot, screenMeshMaterial] = setUpBootText();
-	} else {
-		const dummyTexture = new THREE.Texture();
+export function checkForHitboxesAimedAt(controls, mouse, camera) {
+	if (!controls.isLocked) return;
 
-		abortBoot.abort();
-		screenMeshMaterial.color = new THREE.Color(0x000000);
-		screenMeshMaterial.emissive = new THREE.Color(0x000000);
-		
-		screenMeshMaterial.map.dispose();
+	mouse.x = 0;
+	mouse.y = 0;
 
-		screenMeshMaterial.map = dummyTexture;
-		screenMeshMaterial.emissiveMap = dummyTexture;
+	raycaster.setFromCamera(mouse, camera);
 
-		abortBoot = null;
+	const intersects = raycaster.intersectObjects(hitboxesActive.filter(x => x.visible));
+	if (intersects.length > 0) {
+
+		const object = intersects[0].object;
+
+		if (object === aimedAt) return;
+
+		aimedAt = object;
+		setTextToHitMarker(object.name.replaceAll('%20', ' '));
+	} else if (aimedAt != null) { // logically this shouldn't work but it's a dirty short hand since the if statements run in order
+		aimedAt = null;
+		removeTextFromHitMarket();
 	}
 }
+

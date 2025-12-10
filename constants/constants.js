@@ -19,3 +19,4 @@ export const bootSequence = [
 export const monitorWidth = 2048;
 export const monitorHeight = 1170;
 export const monitorPxSize = 90;
+export const computerModelName = 'computer';

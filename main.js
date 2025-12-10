@@ -3,13 +3,12 @@ import { PointerLockControls } from "three/examples/jsm/controls/PointerLockCont
 import {
 	setUpChairModel,
 	setUpComputerModel,
-	setUpHitBoxes,
 	setUpRoomModel,
 	setUpTableModel,
 	setUpScene,
 } from "./components";
 import { loadAssets } from "./utils/extra.js";
-import { setUpHooks } from "./hooks/hooks.js";
+import { setUpHooks, checkForHitboxesAimedAt } from "./hooks/hooks.js";
 
 let renderer, mouse, scene, camera, controls;
 setUpSpace();
@@ -35,10 +34,10 @@ async function setUpSpace() {
 	setUpTableModel(scene);
 	setUpRoomModel(scene);
 	setUpComputerModel(scene);
-	setUpHitBoxes(scene);
 }
 
 function render() {
+	checkForHitboxesAimedAt(controls, mouse, camera);
 	renderer.render(scene, camera);
 	window.existingLoopId = requestAnimationFrame(render);
 }
