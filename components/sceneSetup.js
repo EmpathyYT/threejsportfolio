@@ -1,9 +1,9 @@
 import * as THREE from "three";
+import * as lil from 'lil-gui'
+import { data } from "../constants/constants";
 
-
-export default function setUpScene(scene, renderer, controls, camera) {
+export default function setUpScene(scene, renderer, controls, camera, dummyCamera) {
 	scene.background = new THREE.Color(0xaaaaaa);
-
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	document.body.appendChild(renderer.domElement);
 
@@ -20,7 +20,16 @@ export default function setUpScene(scene, renderer, controls, camera) {
 
 	scene.add(light);
 	scene.add(hemiLight);
+	scene.add(dummyCamera);
 
 	camera.position.set(0, 0.75, 0);
+	dummyCamera.lookAt(data.desktopLookVector);
+
+	const gui = new lil.GUI();
+	gui.add(camera.position, 'x', -10, 10);
+	gui.add(camera.position, 'y', -10, 10);
+	gui.add(camera.position, 'z', -10, 10);
+
+
 	camera.lookAt(0, 0.5, 0.9);
 }

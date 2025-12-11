@@ -170,6 +170,7 @@ async function setUpDesktop(abortBoot) {
 	screenMeshMaterial.emissiveMap = desktopImg;
 
 	toggleButtonVisibility();
+	window.dispatchEvent(new CustomEvent('toggle-desktop'));
 }
 
 

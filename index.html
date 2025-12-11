@@ -23,8 +23,13 @@
         <div class="w-6 h-6 rounded-full border-2 border-purple-500 flex items-center justify-center">
             <div class="w-1 h-1 rounded-full bg-purple-500"></div>
         </div>
-        <p class="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap text-center text-purple-500 font-bold text-sm pt-1 opacity-0 transition-opacity duration-200" id="hitmarkerText">Somethiung</p>
+        <p class="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap text-center text-purple-500 font-bold text-sm opacity-0 transition-opacity duration-300 pointer-events-none rounded-md mt-1" id="hitmarkerText">Somethiung</p>
     </div>
+    <script>
+        const p = document.getElementById('hitmarkerText');
+        p.style.backdropFilter = 'blur(4px)'
+        p.style.backgroundColor = 'rgba(59, 59, 59, 0.9)'
+    </script>
 </body>
 
 </html> 

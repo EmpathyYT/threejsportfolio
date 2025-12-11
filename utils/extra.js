@@ -65,7 +65,36 @@ export function setTextToHitMarker(text) {
 	p.classList.remove('opacity-0');
 }
 
-export function removeTextFromHitMarket() {
+export function removeTextFromHitMarker() {
 	const text = document.getElementById('hitmarkerText');
 	text.classList.add('opacity-0');
+}
+
+export function setUpToolTips(goingToDesktop) {
+	const baseViewClasses = 'absolute top-full left-1/2 -translate-x-1/2'.split(' ');
+	const desktopViewClasses = 'fixed top-0 left-0'.split(' ');
+
+	if (goingToDesktop) {
+		const p = document.getElementById('hitmarkerText');
+		const div = document.getElementById('hitmarker');
+
+		div.classList.add('invisible');
+		p.parentElement.removeChild(p);
+
+		p.classList.remove(...baseViewClasses)
+		p.classList.add(...desktopViewClasses);
+
+		document.body.append(p);
+	} else {
+		const p = document.getElementById('hitmarkerText');
+		const div = document.getElementById('hitmarker');
+
+		div.classList.remove('invisible');
+		document.body.removeChild(p);
+
+		p.classList.add(...baseViewClasses)
+		p.classList.remove(...desktopViewClasses);
+
+		div.append(p);
+	}
 }

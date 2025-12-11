@@ -1,15 +1,20 @@
-import { cleanScene, removeTextFromHitMarket, setTextToHitMarker } from "../utils/extra";
+import { cleanScene, removeTextFromHitMarker, setUpToolTips } from "../utils/extra";
 import { hitboxesActive } from "../components/hitboxSetup";
+import { handleToolTips, moveCameraToPosition, scaleIcon } from "../utils/pcUitls";
 import * as THREE from "three";
 
 const raycaster = new THREE.Raycaster();
 let aimedAt;
+let isOnDesktop;
 let hookData = {
 	abortBoot: null,
 	screenMeshMaterial: null
 }
+let transition = {
+	state: false
+}
 
-export function setUpHooks(controls, mouse, camera, scene, renderer) {
+export function setUpHooks(controls, camera, dummyCamera, scene, renderer, mouse) {
 	preloadHooks();
 	window.addEventListener(
 		"resize",
@@ -18,11 +23,13 @@ export function setUpHooks(controls, mouse, camera, scene, renderer) {
 	);
 	window.addEventListener(
 		"click",
-		() => window.existingClickHandler(controls, mouse, camera),
+		() => window.existingClickHandler(controls),
 		false
 	);
 	document.addEventListener("click", () => controlLockHook(controls));
 	document.addEventListener("beforeunload", () => cleanScene(scene));
+	window.addEventListener('toggle-desktop', () => handleChangeDesktopMode(camera, dummyCamera, controls))
+	window.addEventListener('mousemove', mouseEvent => trackMousePosition(mouseEvent, mouse))
 }
 
 function preloadHooks() {
@@ -50,8 +57,8 @@ window.existingResizeHandler = function (camera, renderer) {
 	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 };
 
-window.existingClickHandler = function (controls, mouse, camera) {
-	if (!controls.isLocked) return;
+window.existingClickHandler = function (controls) {
+	if (!controls.isLocked && !isOnDesktop) return;
 
 	const intersects = raycaster.intersectObjects(hitboxesActive, true);
 
@@ -64,29 +71,60 @@ window.existingClickHandler = function (controls, mouse, camera) {
 };
 
 function controlLockHook(controls) {
-	controls.lock();
-}
-
-export function checkForHitboxesAimedAt(controls, mouse, camera) {
-	if (!controls.isLocked) return;
-
-	mouse.x = 0;
-	mouse.y = 0;
-
-	raycaster.setFromCamera(mouse, camera);
-
-	const intersects = raycaster.intersectObjects(hitboxesActive.filter(x => x.visible));
-	if (intersects.length > 0) {
-
-		const object = intersects[0].object;
-
-		if (object === aimedAt) return;
-
-		aimedAt = object;
-		setTextToHitMarker(object.name.replaceAll('%20', ' '));
-	} else if (aimedAt != null) { // logically this shouldn't work but it's a dirty short hand since the if statements run in order
-		aimedAt = null;
-		removeTextFromHitMarket();
+	if (!isOnDesktop) {
+		controls.lock();
 	}
 }
 
+function trackMousePosition(mouseEvent, data) {
+	data.rawX = mouseEvent.clientX;
+	data.rawY = mouseEvent.clientY;
+	
+if (!isOnDesktop) {
+		data.x = 0;
+		data.y = 0;
+	} else {
+		data.x  = (mouseEvent.clientX / window.innerWidth) * 2 - 1 // turn from 0,width to 0,1 then 0,2 then -1,1
+		data.y  = -((mouseEvent.clientY / window.innerHeight) * 2 - 1) // y is flipped in dom
+	}
+}
+
+export function checkForHitboxesAimedAt(mouse, camera) {
+	if (transition.state) return;
+	
+	raycaster.setFromCamera(mouse, camera);
+	const intersects = raycaster.intersectObjects(hitboxesActive.filter(x => x.visible));
+	if (intersects.length > 0) {
+		const object = intersects[0].object;
+		if (object === aimedAt) {
+			if (!isOnDesktop) return;
+			removeTextFromHitMarker();
+			handleToolTips(isOnDesktop, object, mouse);
+			return
+		}
+		
+		if (isOnDesktop) scaleIcon(0.2, 0.2, object)
+
+		aimedAt = object;
+		handleToolTips(isOnDesktop, object, mouse);
+
+	} else if (aimedAt != null) { // logically this shouldn't work but it's a dirty short hand since the if statements run in order
+		if (isOnDesktop) scaleIcon(0.2, 0.2, aimedAt, true);
+		aimedAt = null;
+		removeTextFromHitMarker();
+	}
+}
+
+function handleChangeDesktopMode(camera, dummyCamera, controls) {
+	isOnDesktop = !isOnDesktop;
+	if (isOnDesktop) {
+		removeTextFromHitMarker();
+		controls.unlock();
+	}
+	
+	setUpToolTips(isOnDesktop);
+	moveCameraToPosition(camera, dummyCamera, isOnDesktop, transition)
+}
+
+
+ 

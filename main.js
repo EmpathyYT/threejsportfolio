@@ -9,15 +9,18 @@ import {
 } from "./components";
 import { loadAssets } from "./utils/extra.js";
 import { setUpHooks, checkForHitboxesAimedAt } from "./hooks/hooks.js";
+import { setUpDummyCamera } from "./utils/pcUitls.js";
+import { data } from "./constants/constants.js";
 
-let renderer, mouse, scene, camera, controls;
+let renderer, mouse, scene, camera, controls, dummyCamera;
+
 setUpSpace();
 render();
 
 async function setUpSpace() {
 	renderer = new THREE.WebGLRenderer({ antialias: true });
 	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-	mouse = new THREE.Vector2();
+	mouse = {x:0, y:0, rawX: 0, rawY:0};
 	scene = new THREE.Scene();
 	camera = new THREE.PerspectiveCamera(
 		75,
@@ -25,11 +28,12 @@ async function setUpSpace() {
 		0.1,
 		1000
 	);
-	controls = new PointerLockControls(camera, renderer.domElement);
 
-	setUpHooks(controls, mouse, camera, scene, renderer);
+	controls = new PointerLockControls(camera, renderer.domElement);
+	dummyCamera = setUpDummyCamera(data.desktopLocationVector);
+	setUpHooks(controls, camera, dummyCamera, scene, renderer, mouse);
 	await loadAssets();
-	setUpScene(scene, renderer, controls, camera);
+	setUpScene(scene, renderer, controls, camera, dummyCamera);
 	setUpChairModel(scene);
 	setUpTableModel(scene);
 	setUpRoomModel(scene);
@@ -37,7 +41,7 @@ async function setUpSpace() {
 }
 
 function render() {
-	checkForHitboxesAimedAt(controls, mouse, camera);
+	checkForHitboxesAimedAt(mouse, camera);
 	renderer.render(scene, camera);
 	window.existingLoopId = requestAnimationFrame(render);
 }

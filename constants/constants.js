@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 export const bootSequence = [
 	"> [INIT]  Powering up main renderer...",
 	"> [GPU]   Allocating WebGL 2.0 Context...",
@@ -20,3 +22,8 @@ export const monitorWidth = 2048;
 export const monitorHeight = 1170;
 export const monitorPxSize = 90;
 export const computerModelName = 'computer';
+export const data = {
+	baseLocationVector: new THREE.Vector3(0, 0.75, 0),
+	desktopLocationVector: new THREE.Vector3(0, 0.7, 0.5),
+	desktopLookVector: new THREE.Vector3(0, 0.7, 1),
+};
