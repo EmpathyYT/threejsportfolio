@@ -1,5 +1,6 @@
 const iconsData = import.meta.glob('/src/icons/*', {eager: true})
 import * as THREE from 'three';
+import pagingInstance from '../../paging/pagingController.js';
 
 export default function* generateDesktopIcons() {
     const icons = Object.values(iconsData);
@@ -12,6 +13,7 @@ export default function* generateDesktopIcons() {
 
         const iconMesh = generateMesh(iconName, texture, objSize);
         iconMesh.userData.isIcon = true;
+        iconMesh.userData.onClick = () => pagingInstance.openPage(iconName.replaceAll("%20", " "));
         iconMesh.name = iconName;
 
         const [x,z] = calculatePosition(index, 15, objSize, 4);
@@ -19,6 +21,8 @@ export default function* generateDesktopIcons() {
 
         
         iconMesh.visible = false;
+
+        
 
         yield iconMesh;
     }

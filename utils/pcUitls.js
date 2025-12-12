@@ -58,13 +58,13 @@ export function setUpDummyCamera(location) {
     return camera;
 }
 
-export function scaleIcon(scaleX, scaleZ, object, shrink) {
+export function scaleIcon(newScale, oldScale, object, shrink) {
     const currentScale = object.scale;
     const scaleTween = {valX: currentScale.x, valZ: currentScale.z};
 
     gsap.to(scaleTween, {
-        valX: currentScale.x + scaleX * (shrink ? -1 : 1),
-        valZ: currentScale.z + scaleZ * (shrink ? -1 : 1),
+        valX: shrink ? oldScale : newScale,
+        valZ: shrink ? oldScale : newScale,
         onUpdate: () => {
             object.scale.set(scaleTween.valX, 1, scaleTween.valZ);
         }

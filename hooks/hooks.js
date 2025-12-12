@@ -1,20 +1,37 @@
-import { cleanScene, removeTextFromHitMarker, setUpToolTips } from "../utils/extra";
+import {
+	cleanScene,
+	removeTextFromHitMarker,
+	setUpToolTips,
+} from "../utils/extra";
 import { hitboxesActive } from "../components/hitboxSetup";
-import { handleToolTips, moveCameraToPosition, scaleIcon } from "../utils/pcUitls";
+import {
+	handleToolTips,
+	moveCameraToPosition,
+	scaleIcon,
+} from "../utils/pcUitls";
+import pagingInstance from "../paging/pagingController.js";
 import * as THREE from "three";
 
 const raycaster = new THREE.Raycaster();
 let aimedAt;
-let isOnDesktop;
 let hookData = {
 	abortBoot: null,
-	screenMeshMaterial: null
-}
+	screenMeshMaterial: null,
+	isOnDesktop: false,
+};
+let isOnDesktop = hookData.isOnDesktop;
 let transition = {
-	state: false
-}
+	state: false,
+};
 
-export function setUpHooks(controls, camera, dummyCamera, scene, renderer, mouse) {
+export function setUpHooks(
+	controls,
+	camera,
+	dummyCamera,
+	scene,
+	renderer,
+	mouse
+) {
 	preloadHooks();
 	window.addEventListener(
 		"resize",
@@ -23,13 +40,18 @@ export function setUpHooks(controls, camera, dummyCamera, scene, renderer, mouse
 	);
 	window.addEventListener(
 		"click",
-		() => window.existingClickHandler(controls),
+		(event) => window.existingClickHandler(event, controls, renderer),
 		false
 	);
 	document.addEventListener("click", () => controlLockHook(controls));
 	document.addEventListener("beforeunload", () => cleanScene(scene));
-	window.addEventListener('toggle-desktop', () => handleChangeDesktopMode(camera, dummyCamera, controls))
-	window.addEventListener('mousemove', mouseEvent => trackMousePosition(mouseEvent, mouse))
+	window.addEventListener("toggle-desktop", () =>
+		handleChangeDesktopMode(camera, dummyCamera, controls)
+	);
+	window.addEventListener("mousemove", (mouseEvent) =>
+		trackMousePosition(mouseEvent, mouse,)
+	);
+	handleXButtonInSlide();
 }
 
 function preloadHooks() {
@@ -57,9 +79,9 @@ window.existingResizeHandler = function (camera, renderer) {
 	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 };
 
-window.existingClickHandler = function (controls) {
+window.existingClickHandler = function (event, controls, renderer) {
 	if (!controls.isLocked && !isOnDesktop) return;
-
+	if (event.target != renderer.domElement) return;
 	const intersects = raycaster.intersectObjects(hitboxesActive, true);
 
 	if (intersects.length > 0) {
@@ -79,52 +101,61 @@ function controlLockHook(controls) {
 function trackMousePosition(mouseEvent, data) {
 	data.rawX = mouseEvent.clientX;
 	data.rawY = mouseEvent.clientY;
-	
-if (!isOnDesktop) {
+
+	if (!isOnDesktop) {
 		data.x = 0;
 		data.y = 0;
 	} else {
-		data.x  = (mouseEvent.clientX / window.innerWidth) * 2 - 1 // turn from 0,width to 0,1 then 0,2 then -1,1
-		data.y  = -((mouseEvent.clientY / window.innerHeight) * 2 - 1) // y is flipped in dom
+		data.x = (mouseEvent.clientX / window.innerWidth) * 2 - 1; // turn from 0,width to 0,1 then 0,2 then -1,1
+		data.y = -((mouseEvent.clientY / window.innerHeight) * 2 - 1); // y is flipped in dom
 	}
 }
 
+function handleChangeDesktopMode(camera, dummyCamera, controls) {
+	isOnDesktop = !isOnDesktop;
+
+	if (isOnDesktop) {
+		removeTextFromHitMarker();
+		controls.unlock();
+	}
+
+	setUpToolTips(isOnDesktop);
+	moveCameraToPosition(camera, dummyCamera, isOnDesktop, transition);
+}
+
+function handleXButtonInSlide() {
+	const xButton = document.getElementById("xButton");
+	xButton.addEventListener("click", () => pagingInstance.closePage());
+}
+
 export function checkForHitboxesAimedAt(mouse, camera) {
-	if (transition.state) return;
-	
+	if (transition.state || window.isOnSlide) return;
+
 	raycaster.setFromCamera(mouse, camera);
-	const intersects = raycaster.intersectObjects(hitboxesActive.filter(x => x.visible));
+	const intersects = raycaster.intersectObjects(
+		hitboxesActive.filter((x) => x.visible)
+	);
 	if (intersects.length > 0) {
 		const object = intersects[0].object;
 		if (object === aimedAt) {
 			if (!isOnDesktop) return;
 			removeTextFromHitMarker();
 			handleToolTips(isOnDesktop, object, mouse);
-			return
+			return;
 		}
-		
-		if (isOnDesktop) scaleIcon(0.2, 0.2, object)
+
+		if (isOnDesktop) scaleIcon(1.2, 1.0, object);
 
 		aimedAt = object;
 		handleToolTips(isOnDesktop, object, mouse);
-
-	} else if (aimedAt != null) { // logically this shouldn't work but it's a dirty short hand since the if statements run in order
-		if (isOnDesktop) scaleIcon(0.2, 0.2, aimedAt, true);
+	} else if (aimedAt != null) {
+		// logically this shouldn't work but it's a dirty short hand since the if statements run in order
+		shrinkIcons();
 		aimedAt = null;
-		removeTextFromHitMarker();
 	}
 }
 
-function handleChangeDesktopMode(camera, dummyCamera, controls) {
-	isOnDesktop = !isOnDesktop;
-	if (isOnDesktop) {
-		removeTextFromHitMarker();
-		controls.unlock();
-	}
-	
-	setUpToolTips(isOnDesktop);
-	moveCameraToPosition(camera, dummyCamera, isOnDesktop, transition)
+export function shrinkIcons() {
+	if (isOnDesktop) scaleIcon(1.2, 1.0, aimedAt, true);
+	removeTextFromHitMarker();
 }
-
-
- 

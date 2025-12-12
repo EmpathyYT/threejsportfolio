@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { setUpBootText } from "../computerModelSetup";
 import { addChild } from "../../utils/extra";
 import { computerModelName } from "../../constants/constants";
-import {toggleButtonVisibility } from "../hitboxSetup";
+import { toggleButtonVisibility } from "../hitboxSetup";
 
 export default function setUpPowerOnHitBox(scene) {
 	const geometry = new THREE.BoxGeometry(25, 25, 25);
@@ -36,7 +36,9 @@ async function bootLoadingHook(obj) {
 
 		screenMeshMaterial.map = dummyTexture;
 		screenMeshMaterial.emissiveMap = dummyTexture;
-		toggleButtonVisibility();
+		if (obj.isOnDesktop) {
+			toggleButtonVisibility();
+		}
 		obj.abortBoot = null;
 	}
 }

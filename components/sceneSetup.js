@@ -25,11 +25,6 @@ export default function setUpScene(scene, renderer, controls, camera, dummyCamer
 	camera.position.set(0, 0.75, 0);
 	dummyCamera.lookAt(data.desktopLookVector);
 
-	const gui = new lil.GUI();
-	gui.add(camera.position, 'x', -10, 10);
-	gui.add(camera.position, 'y', -10, 10);
-	gui.add(camera.position, 'z', -10, 10);
-
 
 	camera.lookAt(0, 0.5, 0.9);
 }

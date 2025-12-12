@@ -163,7 +163,7 @@ async function loadScreenOS(context, canvas, texture, abortBoot) {
 
 }
 
-async function setUpDesktop(abortBoot) {
+async function setUpDesktop() {
 	const desktopImg = await new THREE.TextureLoader().loadAsync("/pictures/pic.jpg");
 	desktopImg.flipY = false;
 	screenMeshMaterial.map = desktopImg;
