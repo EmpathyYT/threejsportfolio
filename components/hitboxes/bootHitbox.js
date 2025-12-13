@@ -2,8 +2,7 @@ import * as THREE from "three";
 import { setUpBootText } from "../computerModelSetup";
 import { addChild } from "../../utils/extra";
 import { computerModelName } from "../../constants/constants";
-import { toggleButtonVisibility } from "../hitboxSetup";
-
+import { turnOffPc } from "../../utils/pcUitls";
 export default function setUpPowerOnHitBox(scene) {
 	const geometry = new THREE.BoxGeometry(25, 25, 25);
 	const material = new THREE.MeshBasicMaterial({
@@ -26,19 +25,8 @@ async function bootLoadingHook(obj) {
 	if (obj.abortBoot == null) {
 		[obj.abortBoot, obj.screenMeshMaterial] = await setUpBootText();
 	} else {
-		const dummyTexture = new THREE.Texture();
-
 		obj.abortBoot.abort();
-		screenMeshMaterial.color = new THREE.Color(0x000000);
-		screenMeshMaterial.emissive = new THREE.Color(0x000000);
-		
-		screenMeshMaterial.map.dispose();
-
-		screenMeshMaterial.map = dummyTexture;
-		screenMeshMaterial.emissiveMap = dummyTexture;
-		if (obj.isOnDesktop) {
-			toggleButtonVisibility();
-		}
+		turnOffPc(screenMeshMaterial, obj.isOnDesktop);
 		obj.abortBoot = null;
 	}
 }

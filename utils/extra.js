@@ -1,7 +1,11 @@
-import {monitorWidth, monitorHeight} from "../constants/constants.js";
+import { monitorWidth, monitorHeight } from "../constants/constants.js";
 
 export function wait(time) {
-  return new Promise((resolve) => setTimeout(() => {resolve()}, time));
+	return new Promise((resolve) =>
+		setTimeout(() => {
+			resolve();
+		}, time)
+	);
 }
 
 export function cleanMaterial(material) {
@@ -21,7 +25,6 @@ export async function loadAssets() {
 	const font = new FontFace("VT323", "url('/fonts/VT323.ttf')");
 	await font.load();
 	document.fonts.add(font);
-
 }
 
 export function cleanMemory(object3d) {
@@ -60,41 +63,45 @@ export function addChild(scene, objtoAdd, nameOfParent) {
 }
 
 export function setTextToHitMarker(text) {
-	const p = document.getElementById('hitmarkerText');
+	const p = document.getElementById("hitmarkerText");
 	p.textContent = text;
-	p.classList.remove('opacity-0');
+	p.classList.remove("opacity-0");
 }
 
 export function removeTextFromHitMarker() {
-	const text = document.getElementById('hitmarkerText');
-	text.classList.add('opacity-0');
+	const text = document.getElementById("hitmarkerText");
+	if (!text.classList.contains("opacity-0")) {
+		text.classList.add("opacity-0");
+	}
 }
 
 export function setUpToolTips(goingToDesktop) {
-	const baseViewClasses = 'absolute top-full left-1/2 -translate-x-1/2'.split(' ');
-	const desktopViewClasses = 'fixed top-0 left-0'.split(' ');
+	const baseViewClasses = "absolute top-full left-1/2 -translate-x-1/2".split(
+		" "
+	);
+	const desktopViewClasses = "fixed top-0 left-0".split(" ");
 
 	if (goingToDesktop) {
-		const p = document.getElementById('hitmarkerText');
-		const div = document.getElementById('hitmarker');
+		const p = document.getElementById("hitmarkerText");
+		const div = document.getElementById("hitmarker");
 
-		div.classList.add('invisible');
+		div.classList.add("invisible");
 		p.parentElement.removeChild(p);
 
-		p.classList.remove(...baseViewClasses)
+		p.classList.remove(...baseViewClasses);
 		p.classList.add(...desktopViewClasses);
 
 		document.body.append(p);
 	} else {
-		const p = document.getElementById('hitmarkerText');
-		const div = document.getElementById('hitmarker');
-
-		div.classList.remove('invisible');
+		const p = document.getElementById("hitmarkerText");
+		const div = document.getElementById("hitmarker");
+		removeTextFromHitMarker();
+		div.classList.remove("invisible");
 		document.body.removeChild(p);
 
-		p.classList.add(...baseViewClasses)
+		p.classList.add(...baseViewClasses);
 		p.classList.remove(...desktopViewClasses);
-
+		p.style.transform = "";
 		div.append(p);
 	}
 }

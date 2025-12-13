@@ -8,6 +8,7 @@ import {
 	handleToolTips,
 	moveCameraToPosition,
 	scaleIcon,
+	turnOffPc,
 } from "../utils/pcUitls";
 import pagingInstance from "../paging/pagingController.js";
 import * as THREE from "three";
@@ -82,6 +83,7 @@ window.existingResizeHandler = function (camera, renderer) {
 window.existingClickHandler = function (event, controls, renderer) {
 	if (!controls.isLocked && !isOnDesktop) return;
 	if (event.target != renderer.domElement) return;
+	if (transition.state) return;
 	const intersects = raycaster.intersectObjects(hitboxesActive, true);
 
 	if (intersects.length > 0) {
@@ -111,12 +113,16 @@ function trackMousePosition(mouseEvent, data) {
 	}
 }
 
-function handleChangeDesktopMode(camera, dummyCamera, controls) {
+async function handleChangeDesktopMode(camera, dummyCamera, controls) {
 	isOnDesktop = !isOnDesktop;
-
+	hookData.abortBoot = null;
+	transition.state = true;
 	if (isOnDesktop) {
 		removeTextFromHitMarker();
 		controls.unlock();
+	} else {
+		await turnOffPc(hookData.screenMeshMaterial, true);
+		controls.lock();
 	}
 
 	setUpToolTips(isOnDesktop);
@@ -144,7 +150,7 @@ export function checkForHitboxesAimedAt(mouse, camera) {
 			return;
 		}
 
-		if (isOnDesktop) scaleIcon(1.2, 1.0, object);
+		if (isOnDesktop) scaleIcon(object);
 
 		aimedAt = object;
 		handleToolTips(isOnDesktop, object, mouse);
@@ -156,6 +162,6 @@ export function checkForHitboxesAimedAt(mouse, camera) {
 }
 
 export function shrinkIcons() {
-	if (isOnDesktop) scaleIcon(1.2, 1.0, aimedAt, true);
+	if (isOnDesktop) scaleIcon(aimedAt, true);
 	removeTextFromHitMarker();
 }
