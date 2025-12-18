@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@theme {
+  
+  /* This makes Space Grotesk the default for the whole app */
+  --font-sans: "Space Grotesk", sans-serif;
+
+  /* Use this for code snippets or tech specs */
+  --font-mono: "Space Mono", monospace;
+  
+  /* 1. The World (Carbon Black) 
+    Usage: bg-bg, bg-bg-surface, bg-bg-card
+  */
+  --color-bg: #111312;
+  --color-bg-surface: #181b19;
+  --color-bg-card: #2f3732;
+
+  /* 2. The Text 
+    Usage: text-text-main, text-text-muted
+  */
+  --color-text-main: #f1f3f2;
+  --color-text-muted: #92a098;
+
+  /* 3. The Brand (Stormy Teal) 
+    Usage: bg-primary, text-primary-hover
+  */
+  --color-primary: #3dc0c2;
+  --color-primary-hover: #31999b;
+  --color-primary-glow: #184d4e;
+
+  /* 4. Success (Seaweed) 
+    Usage: text-success
+  */
+  --color-success: #50af83;
+
+  /* 5. Danger (Imperial Red) 
+    Usage: bg-danger, bg-danger-dim
+  */
+  --color-danger: #ff0035;
+  --color-danger-dim: #7a001a;
+  --color-danger-text: #ffc2cd;
+
+  --animate-blink: blink steps(2) 1s infinite;
+  --animate-scan: scan linear 0.3s infinite;
+
+  @keyframes blink {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes scan {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 0 5px;
+    }
+  }
+}
+
+@layer components {
+  .linearGradientStriped {
+    background: repeating-linear-gradient(
+      to right,
+      var(--color-primary) 0px,
+      var(--color-primary) 1px,
+      transparent 1px,
+      transparent 5px
+    );
+  }
+
+  .linearCRTGradient {
+    background: repeating-linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-bg) 30%, transparent 70%) 0px,
+      color-mix(in srgb, var(--color-bg) 30%, transparent 70%) 4px,
+      transparent 4px,
+      transparent 5px
+    );
+    animation: var(--animate-scan);
+  }
+}
+
+
+  @utility glowTextShadow {
+    text-shadow: 0px 0px 1px white,
+    0px 0px 4px var(--color-primary),
+    0px 0px 15px color-mix(in srgb, var(--color-primary) 30%, transparent 70%)
+  }
+
+  @utility glowBox {
+    box-shadow: 0px 0px 1px white,
+    0px 0px 4px var(--color-primary),
+    0px 0px 15px color-mix(in srgb, var(--color-primary) 30%, transparent 70%)
+  }
+
+
+   

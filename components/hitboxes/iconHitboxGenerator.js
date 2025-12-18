@@ -84,6 +84,7 @@ function setUpScalingTween(obj, normal, scaled) {
 			paused: true,
 			x: scaled,
 			z: scaled,
+			overwrite: "auto"
 		}
 	);
 

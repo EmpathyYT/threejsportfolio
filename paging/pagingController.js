@@ -1,4 +1,5 @@
 import { shrinkIcons } from "../hooks/hooks";
+import scrambleCode from '../utils/wordScrambler.js';
 
 const pagesData = import.meta.glob("/src/pages/*", {
     eager: true,
@@ -27,6 +28,13 @@ function returnHTML(pageId) {
     return page[1].default;
 }
 
+function setUpScrambler(pageId) {
+	console.log(pageId)
+	if (pageId === 'About Me') {
+		scrambleCode('In a world where everything is locked behind a micro transaction, people yearn for safety and silence. My mission is to bring that back to reality.', 'bio')
+	}
+}
+
 export default {
 	openPage(pageId) {
         window.isOnSlide = true;
@@ -35,6 +43,7 @@ export default {
         const div = document.getElementById('pageContainer');
         div.innerHTML = page;
 		slideOverlay();
+		setUpScrambler(pageId)
 	},
     closePage() {
         slideOverlay();

@@ -11,6 +11,8 @@ import { loadAssets } from "./utils/extra.js";
 import { setUpHooks, checkForHitboxesAimedAt } from "./hooks/hooks.js";
 import { setUpDummyCamera } from "./utils/pcUitls.js";
 import { data } from "./constants/constants.js";
+import './style.css';
+
 
 let renderer, mouse, scene, camera, controls, dummyCamera;
 

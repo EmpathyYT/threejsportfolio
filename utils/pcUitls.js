@@ -55,11 +55,15 @@ export function setUpDummyCamera(location) {
 
 export function scaleIcon(object, shrink) {
     let scaleTween = object.userData.scaleTween;
-    
+
     if (shrink) {
         scaleTween.reverse();
     } else {
-        scaleTween.play();    
+        if (scaleTween.progress() === 1) {
+            scaleTween.restart()
+        } else {
+            scaleTween.play()
+        } 
     }
     
 }

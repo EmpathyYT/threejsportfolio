@@ -14,7 +14,6 @@
     </style>
     <script type="module" src="main.js"></script>
     
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="style.css"/>
 </head>
 <!-- keep in mind that absolute works with parent containers that have fixed, relative or absolute. -->
@@ -32,7 +31,7 @@
         <div class="flex absolute h-1/10 w-full items-end justify-center top-0 pb-5">
             <div class="flex rounded-full border-2 h-10 aspect-square justify-center items-center text-center p-2 font-bold text-xl bg-black/20 select-none cursor-pointer hover:bg-white/20 active:scale-90 transition duration-300" id="xButton">X</div>
         </div>
-        <div id="pageContainer" class="h-8/10 w-7/10 opacity-60">
+        <div id="pageContainer" class="w-7/10 h-8/10 bg-bg/80 overflow-y-auto overflow-x-hidden text-text-main">
             <!-- page goes here -->
         </div>
     </div>

@@ -117,6 +117,8 @@ async function handleChangeDesktopMode(camera, dummyCamera, controls) {
 	isOnDesktop = !isOnDesktop;
 	hookData.abortBoot = null;
 	transition.state = true;
+	aimedAt = null;
+
 	if (isOnDesktop) {
 		removeTextFromHitMarker();
 		controls.unlock();
@@ -124,7 +126,7 @@ async function handleChangeDesktopMode(camera, dummyCamera, controls) {
 		await turnOffPc(hookData.screenMeshMaterial, true);
 		controls.lock();
 	}
-
+	
 	setUpToolTips(isOnDesktop);
 	moveCameraToPosition(camera, dummyCamera, isOnDesktop, transition);
 }
