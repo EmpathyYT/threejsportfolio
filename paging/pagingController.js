@@ -29,7 +29,6 @@ function returnHTML(pageId) {
 }
 
 function setUpScrambler(pageId) {
-	console.log(pageId)
 	if (pageId === 'About Me') {
 		scrambleCode('In a world where everything is locked behind a micro transaction, people yearn for safety and silence. My mission is to bring that back to reality.', 'bio')
 	}

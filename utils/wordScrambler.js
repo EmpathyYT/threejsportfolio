@@ -34,6 +34,8 @@ const symbols = [
 	];
 
 export default async function scrambleCode(finalText, id) {
+	const time = 700 / finalText.length;
+
 	const state = {
 		finished: false,
 		letters: "",
@@ -44,7 +46,7 @@ export default async function scrambleCode(finalText, id) {
         const letters = finalText.slice(0, i + 1);
         state.letters = letters;
 		if (letters == finalText) state.finished = true;
-        await wait(18);
+        await wait(time);
     }
 }
 
