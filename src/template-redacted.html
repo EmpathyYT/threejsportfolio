@@ -1,0 +1,70 @@
+<div class="grid grid-cols-[2fr_1fr] w-full h-full">
+    <div class="relative border-bg-card pt-8 border-r h-full flex flex-col">
+        <div class="absolute top-0 left-0 border-l-2 border-t-2 border-primary w-4 h-4"></div>
+        <div class="pl-8 mb-5" id="title-container">
+            <a target="_blank" class="font-mono text-xs text-text-muted mb-2 border-b border-bg-card pb-1 select-none cursor-pointer hover:text-text-main/90 active:scale-90 transition duration-100 inline-block" id="initialize">[ INITIALIZE ]</a>
+            <div class="mt-8 border-l-2 border-primary/50 pl-6 relative ">
+                <div class="absolute top-0 left-0 h-1.5 w-1.5 bg-primary -m-1"></div>
+                <span class="text-text-muted text-sm font-mono font-normal tracking-normal">MODULE_ID  ::</span>
+                <h1 class="flex items-baseline gap-3 flex-wrap text-5xl font-bold tracking-tight glowTextShadow" id="title"></h1>
+                <div class="flex items-baseline flex-wrap text-primary text-sm font-mono mt-2">
+                    <p id="short_bio">> </p>
+                    <p class="animate-blink brightness-200 contrast-200 font-bold">_</p>
+                </div>
+            </div>
+        </div>
+        <div class="flex-1 border-t border-bg-card grid grid-cols-2 mt-5">
+            <div class="flex flex-col h-full border-r border-bg-card relative justify-center text-justify">
+                <div class="flex-1 font-mono text-text-muted px-4 max-w-80 leading-relaxed overflow-hidden "> 
+                    <!-- match left padding -->
+                    <p class="text-primary text-center pt-4" id="synopsis"></p>
+                    <p class="text-sm tracking-wide text-justify text-xs mt-2 transition-all duration-500 animate-fade-in" id="bio"></p>
+                </div>
+                <div class="flex-1 border-t border-bg-card relative border-bg-card flex flex-col items-center justify-between font-mono text-text-muted px-4 max-w-80 leading-relaxed overflow-hidden">
+                    <p class="text-primary text-center pt-4", id="stack"></p>
+                    <div class="relative w-4/5 flex-1 mt-2 mb-4 border-bg-card border-x-2 bg-bg/12 flex justify-center flex-col gap-1 text-sm">
+                        <div class="absolute inset-0 w-6 h-4 border-t-2 border-bg-card"></div>
+                        <div class="absolute bottom-0 w-6 h-4 border-b-2 border-bg-card"></div>
+                        <div class="absolute top-0 right-0 w-6 h-4 border-t-2 border-bg-card"></div>
+                        <div class="absolute right-0 bottom-0 w-6 h-4 border-b-2 border-bg-card"></div>
+                        <span class="text-text-main text-center border-b border-white/5 py-1" id="stack-1"></span>
+                        <span class="text-text-main text-center border-b border-white/5 py-1" id="stack-2"></span>
+                        <span class="text-text-main text-center border-b border-white/5 py-1" id="stack-3"></span>
+                        <span class="text-text-main text-center border-b border-white/5 py-1" id="stack-4"></span>
+                        <span class="text-text-main text-center " id="stack-5"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col">
+                <div class="flex-1 notAllowedGradient group cursor-not-allowed select-none relative flex flex-col items-center justify-between">
+                    <span id="redacted" class="group-hover:redacted-text text-xl font-mono text-text-muted flex-1 flex w-full justify-center items-center transition-all duration-300 animate-distort">
+                        [ REDACTED ]
+                    </span>
+                        <p class="absolute w-full opacity-0 group-hover:opacity-100 transition-all duration-300 text-center top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-text-main font-mono text-6xl font-bold">
+                            (/)
+                        </p>
+                </div>
+                <div class="flex-1 border-t border-bg-card relative select-none flex flex-col items-center justify-between">
+                    <a href="https://linktr.ee/the_ghost_studio" target="_blank" rel="noopener noreferrer" class="flex-1 flex w-full justify-center items-center transition-all duration-300 group hover:bg-primary/5 hover:pl-4 hover:glowBox hover:glowTextShadow mb-[3px]">
+                        <span class="text-xl font-mono text-text-muted group-hover:text-primary">
+                        [ INQUIRIES ]
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="carousel" class="size-full flex flex-col overflow-y-auto no-scrollbar">
+        <img id="img" src="" alt="" class="m-8 opacity-80 border-2 border-bg-card">
+    </div>
+</div>
+<div id="img-slide" class="flex justify-center items-center backdrop-blur-lg bg-bg-card/80 onclick top-1/2 left-1/2 -translate-x-1/2 fixed translate-y-full transition-all duration-700 size-full">
+    <div class="flex justify-center items-center absolute h-1/5 rounded-full top-0 w-full">
+        <div class="flex justify-center items-center h-10 aspect-square border-2 rounded-full border-primary bg-black/20 select-none cursor-pointer hover:bg-white/20 active:scale-90 transition duration-300" onclick="" id="closeimg">
+            <p class="text-center p-2 font-bold text-xl">X</p>
+        </div>
+    </div>  
+    <div class="flex justify-center size-3/5">
+        <img src="" alt="" id="slide image">
+    </div>
+</div>

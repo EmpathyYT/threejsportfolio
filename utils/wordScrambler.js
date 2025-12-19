@@ -34,7 +34,7 @@ const symbols = [
 	];
 
 export default async function scrambleCode(finalText, id) {
-	const time = 700 / finalText.length;
+	const time = 1000 / finalText.length;
 
 	const state = {
 		finished: false,
