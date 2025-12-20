@@ -4,6 +4,7 @@ import scrambleCode from "../utils/wordScrambler.js";
 import flipper from "../utils/wordFlipper.js";
 import { wait } from "../utils/extra.js";
 
+//these happen at build time
 const HTMLPages = import.meta.glob("/src/pages/*", {
 	eager: true,
 	query: "?raw",
@@ -13,6 +14,13 @@ const templatesData = import.meta.glob("/src/*.html", {
 	eager: true,
 	query: "?raw",
 });
+
+const images = import.meta.glob(
+	["/src/**/*", "!/src/icons/*", "!/src/icons/**", '!/src/**/*.html', '!/src/**/*.js'],
+	{
+		eager: true,
+	}
+);
 
 function slideOverlay() {
 	const overlay = document.getElementById("slide");
@@ -68,10 +76,31 @@ function createPage(pageName) {
 	}
 }
 
-function setUpImgs() {
+function setUpImgs(pageId) {
+	const imgs = [];
+	const imgObject = Object.entries(images);
 
+	imgObject.forEach(([key, val]) => {
+		if (key.includes(pageId)) {
+			imgs.push(val.default);
+		}
+	});
+	const carousel = document.getElementById('carousel');
+	const img = document.getElementById('img');
+	img.setAttribute('src', imgs[0]);
+	imgs.shift();
 	
+	for (const [index, imgSrc] of imgs.entries()) {
+		const newImg = img.cloneNode();
+		newImg.setAttribute('src', imgSrc);
+		newImg.setAttribute('id', index);
+		carousel.append(newImg);
+	};
 
+	setUpImgSlide();
+}
+
+function setUpImgSlide() {
 	const el = document.getElementById("carousel");
 	const imgclose = document.getElementById("closeimg");
 
@@ -94,7 +123,6 @@ function setUpImgs() {
 }
 
 function initlaizePage(data) {
-	setUpImgs();
 	const arrayOfData = Object.entries(data);
 	const classifiedP = document.createElement("p");
 	classifiedP.className = "font-mono text-xs text-text-muted mb-2 select-none";
@@ -121,8 +149,8 @@ function initlaizePage(data) {
 			}
 			continue;
 		}
-		if (key == 'source_btn') {
-			document.getElementById(key).setAttribute('href', val);
+		if (key == "source_btn") {
+			document.getElementById(key).setAttribute("href", val);
 			continue;
 		}
 		document.getElementById(key).textContent = val;
@@ -138,6 +166,7 @@ export default {
 		div.innerHTML = page;
 		slideOverlay();
 		if (data) {
+			setUpImgs(pageId)
 			initlaizePage(data);
 		}
 		setUpScrambler(pageId);
