@@ -15,12 +15,12 @@
         </div>
         <div class="flex-1 border-t border-bg-card grid grid-cols-2 mt-5">
             <div class="flex flex-col h-full border-r border-bg-card relative justify-center text-justify">
-                <div class="flex-1 font-mono text-text-muted px-4 max-w-80 leading-relaxed overflow-hidden "> 
+                <div class="flex-1 font-mono text-text-muted px-4  leading-relaxed overflow-hidden "> 
                     <!-- match left padding -->
                     <p class="text-primary text-center pt-4" id="synopsis"></p>
                     <p class="text-sm tracking-wide text-justify text-xs mt-2 transition-all duration-500 animate-fade-in" id="bio"></p>
                 </div>
-                <div class="flex-1 border-t border-bg-card relative border-bg-card flex flex-col items-center justify-between font-mono text-text-muted px-4 max-w-80 leading-relaxed overflow-hidden">
+                <div class="flex-1 border-t border-bg-card relative border-bg-card flex flex-col items-center justify-between font-mono text-text-muted px-4  leading-relaxed overflow-hidden">
                     <p class="text-primary text-center pt-4", id="stack"></p>
                     <div class="relative w-4/5 flex-1 mt-2 mb-4 border-bg-card border-x-2 bg-bg/12 flex justify-center flex-col gap-1 text-sm">
                         <div class="absolute inset-0 w-6 h-4 border-t-2 border-bg-card"></div>
@@ -36,7 +36,7 @@
                 </div>
             </div>
             <div class="flex flex-col">
-                <div class="flex-1 notAllowedGradient group cursor-not-allowed select-none relative flex flex-col items-center justify-between">
+                <div class="flex-1 notAllowedGradient group cursor-not-allowed select-none relative flex flex-col items-center justify-between overflow-hidden">
                     <span id="redacted" data-text="[ REDACTED ]" class="z-20 outOfSyncText group-hover:redacted-text text-xl font-mono text-text-muted flex-1 flex w-full justify-center items-center transition-all duration-300 animate-distort">
                         [ REDACTED ]
                     </span>
@@ -58,7 +58,7 @@
         <img id="img" src="" alt="" class="m-8 opacity-80 border-2 border-bg-card">
     </div>
 </div>
-<div id="img-slide" class="flex justify-center items-center backdrop-blur-lg bg-bg-card/80 onclick top-1/2 left-1/2 -translate-x-1/2 fixed translate-y-full transition-all duration-700 size-full">
+<div id="img-slide" class="flex justify-center items-center backdrop-blur-lg bg-bg-card/80 onclick top-1/2 left-1/2 -translate-x-1/2 fixed translate-y-full transition-all duration-700 size-full z-50">
     <div class="flex justify-center items-center absolute h-1/5 rounded-full top-0 w-full">
         <div class="flex justify-center items-center h-10 aspect-square border-2 rounded-full border-primary bg-black/20 select-none cursor-pointer hover:bg-white/20 active:scale-90 transition duration-300" onclick="" id="closeimg">
             <p class="text-center p-2 font-bold text-xl">X</p>

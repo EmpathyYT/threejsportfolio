@@ -9,9 +9,11 @@ import setUpHitBoxes, {toggleButtonVisibility } from "./hitboxSetup.js";
 import * as THREE from "three";
 let screenMeshMaterial;
 
+const baseUrl = import.meta.env.BASE_URL;
+
 export default function setUpComputerModel(scene, manager) {
 	const loader = new GLTFLoader(manager);
-	loader.load("models/personal_computer/pc.glb", function (gltf) {
+	loader.load(baseUrl + "models/personal_computer/pc.glb", function (gltf) {
 		const computer = gltf.scene.children[0];
 		computer.name = computerModelName;
 		computer.position.set(-7.9, 0.35, -1.87);
@@ -162,9 +164,8 @@ async function loadScreenOS(context, canvas, texture, abortBoot) {
 	await setUpDesktop(abortBoot);
 
 }
-
 async function setUpDesktop() {
-	const desktopImg = await new THREE.TextureLoader().loadAsync("/pictures/pic.jpg");
+	const desktopImg = await new THREE.TextureLoader().loadAsync(`${baseUrl}pictures/pic.jpg`);
 	desktopImg.flipY = false;
 	screenMeshMaterial.map = desktopImg;
 	screenMeshMaterial.emissiveMap = desktopImg;

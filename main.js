@@ -19,7 +19,6 @@ const APP_CONTEXT_KEY = '__THREE_APP_CONTEXT__';
 
 // 1. IMMEDIATE CLEANUP
 if (window[APP_CONTEXT_KEY]) {
-    console.log("Cleaning up previous context...");
     const ctx = window[APP_CONTEXT_KEY];
     
     // Stop loop first

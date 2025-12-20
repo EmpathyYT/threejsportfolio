@@ -12,6 +12,6 @@ export const pageData = {
             'UI/UX'
         ],
         source_btn: null,
-        initialize: "https://www.google.com" //todo change this once u create a WIP or download link for the app
+        initialize: "unimplemented.html" //todo change this once u create a download link for the app
     }
 }

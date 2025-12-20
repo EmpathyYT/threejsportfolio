@@ -16,7 +16,7 @@ const templatesData = import.meta.glob("/src/*.html", {
 });
 
 const images = import.meta.glob(
-	["/src/**/*", "!/src/icons/*", "!/src/icons/**", '!/src/**/*.html', '!/src/**/*.js'],
+	["/src/**/*", "!/src/icons/*", "!/src/icons/**", "!/src/**/*.html", "!/src/**/*.js"],
 	{
 		eager: true,
 	}
@@ -112,7 +112,6 @@ function setUpImgSlide() {
 
 	el.onclick = (event) => {
 		const clickedEl = event.target;
-		console.log(event.target.tagName);
 		if (event.target.tagName != "IMG") return;
 		const slideEl = document.getElementById("img-slide");
 		const imgEl = document.getElementById("slide image");

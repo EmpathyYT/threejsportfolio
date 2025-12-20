@@ -4,6 +4,7 @@ import { wait } from "./extra";
 export default async function word_flipper(id, duration, ...words) {
 
     const textEl = document.getElementById(id);
+    if (!textEl) return;
     let currentIndex = words.indexOf(textEl.textContent);
     currentIndex = currentIndex == -1 ? 0 : currentIndex;
 

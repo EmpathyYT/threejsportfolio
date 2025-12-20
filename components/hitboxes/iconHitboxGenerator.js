@@ -8,7 +8,7 @@ export default function* generateDesktopIcons() {
 	reorderIcons(icons);
 	for (const [index, icon] of icons.entries()) {
 		const iconPath = icon.default;
-		const iconName = iconPath.split("/").at(-1).split(".")[0];
+		const iconName = iconPath.split("/").at(-1).split(".")[0].split("-")[0];
 		const texture = new THREE.TextureLoader().load(iconPath);
 
 		const objSize = 22;

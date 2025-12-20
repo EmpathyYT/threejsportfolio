@@ -15,7 +15,6 @@ export function cleanMaterial(material) {
 	for (const key of Object.keys(material)) {
 		const value = material[key];
 		if (value && typeof value === "object" && "minFilter" in value) {
-			console.log(`Disposing texture: ${key}`);
 			value.dispose();
 		}
 	}
@@ -65,8 +64,9 @@ export function applyTextureRelease(object) {
 	});
 }
 
+const baseUrl = import.meta.env.BASE_URL;
 export async function loadAssets() {
-	const font = new FontFace("VT323", "url('/fonts/VT323.ttf')");
+	const font = new FontFace("VT323", `url('${baseUrl}fonts/VT323.ttf')`);
 	await font.load();
 	document.fonts.add(font);
 }

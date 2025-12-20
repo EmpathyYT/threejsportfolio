@@ -111,6 +111,9 @@ export function cleanHooks(listenersToClean) {
 }
 
 window.existingResizeHandler = function (camera, renderer) {
+	if (window.innerWidth < 1024) {
+		window.location.href = 'access_denied.html'
+	}
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
 	renderer.setSize(window.innerWidth, window.innerHeight);

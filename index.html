@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/icon.png">
     <title>Basel Portfolio</title>
     <style>
         body {
@@ -15,12 +16,15 @@
     <script type="module" src="main.js"></script>
     
     <link rel="stylesheet" href="style.css"/>
+    <script>
+        if (window.innerWidth < 1024) {
+            window.location.href = 'access_denied.html';
+        }
+    </script>
 </head>
-<!-- keep in mind that absolute works with parent containers that have fixed, relative or absolute. -->
-<!-- justify-center tells it how to distribute the children -->
 
 <body class="overflow-hidden">
-    <div class="flex justify-center items-center h-screen w-screen overflow-hidden bg-bg duration-800 transition-all z-50 fixed top-0 left-0" id="loading-screen">
+    <div class="flex justify-center items-center h-screen w-screen overflow-hidden bg-bg duration-800 transition-all z-40 fixed top-0 left-0" id="loading-screen">
         <div class="flex flex-col p-5 w-1/2 border border-bg-card bg-bg-surface">
             <p class="text-center text-primary text-3xl font-mono" id="title">[ SYSTEM INITIALIZING ]</p>
             <p class="text-text-muted font-mono pt-5 text-center text-sm" id="loading-text">> Loading resources</p>
@@ -48,8 +52,36 @@
     </div>
     <script type="module">
         import codeScrambler from "./utils/wordScrambler.js";
-        import {flippingDots} from './utils/flippingDots.js';
-        flippingDots(3, 'loading-text');
+
+        const sentences = [
+            "> Loading resources",
+            "> Establishing secure connection",
+            "> Decrypting user data",
+            "> Bypassing firewalls",
+            "> Initializing environment",
+            "> Fetching assets"
+        ];
+        
+        let index = 0;
+        let dotCount = 0;
+        let reverseDots = false;
+        const loadingText = document.getElementById('loading-text');
+        
+        setInterval(() => {
+            if (!document.getElementById('loading-text')) return;
+            
+            index = (index + 1) % sentences.length;
+            
+            if (!reverseDots) {
+                dotCount++;
+                if (dotCount >= 3) reverseDots = true;
+            } else {
+                dotCount--;
+                if (dotCount <= 0) reverseDots = false;
+            }
+            
+            loadingText.textContent = sentences[index] + '.'.repeat(dotCount);
+        }, 1250);
 
         const p = document.getElementById('hitmarkerText');
         p.style.backdropFilter = 'blur(4px)'
