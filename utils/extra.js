@@ -21,6 +21,50 @@ export function cleanMaterial(material) {
 	}
 }
 
+export function releaseTexture(texture) {
+	if (texture) {
+		if (texture.image instanceof Array) {
+			for (var i = 0, len = texture.image.length; i < len; i++) {
+				if (texture.image[i]) {
+					if (texture.image[i].mipmaps) {
+						texture.image[i].mipmaps.length = 0;
+					}
+
+					texture.image[i] = undefined;
+				}
+			}
+		} else if (texture.image) {
+			if (texture.image.mipmaps) {
+				texture.image.mipmaps.length = 0;
+			}
+
+			texture.image = undefined;
+		}
+
+		if (texture.mipmaps) {
+			texture.mipmaps.length = 0;
+		}
+
+		texture.onUpdate = undefined;
+	}
+}
+
+export function applyTextureRelease(object) {
+	object.traverse((child) => {
+		if (child.isMesh) {
+			const material = child.material;
+			if (material) {
+				for (const key in material) {
+					const value = material[key];
+					if (value && value.isTexture) {
+						value.onUpdate = () => releaseTexture(value);
+					}
+				}
+			}
+		}
+	});
+}
+
 export async function loadAssets() {
 	const font = new FontFace("VT323", "url('/fonts/VT323.ttf')");
 	await font.load();
@@ -45,6 +89,30 @@ export function cleanMemory(object3d) {
 export function cleanScene(scene) {
 	cleanMemory(scene);
 	scene.clear();
+}
+
+export function fullCleanup(scene, renderer, controls, gui) {
+	if (window.existingLoopId) {
+		cancelAnimationFrame(window.existingLoopId);
+	}
+
+	if (scene) cleanScene(scene);
+
+    if (gui) {
+        gui.destroy();
+    }
+
+    if (controls) {
+        controls.dispose();
+    }
+
+	if (renderer) {
+        if (renderer.domElement && renderer.domElement.parentElement) {
+            renderer.domElement.parentElement.removeChild(renderer.domElement);
+        }
+		renderer.dispose();
+		renderer.forceContextLoss();
+	}
 }
 
 export function setCanvasSizes(canvas) {

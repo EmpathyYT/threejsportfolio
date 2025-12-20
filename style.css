@@ -42,7 +42,10 @@
 	--animate-blink: blink steps(2) 1s infinite;
 	--animate-scan: scan linear 0.3s infinite;
 	--animate-fade-in: fade-in linear 0.7s;
+	--animate-toast: toast linear 9s forwards;
 	--animate-distort: distort steps(2, end) 5s infinite;
+	--animate-distort-2: distort-2 steps(2, end) 5s infinite;
+
 
 	@keyframes blink {
 		0% {
@@ -114,6 +117,60 @@
 			transform: translate(2px, 2px) skew(-20deg);
 		}
 	}
+
+	@keyframes toast {
+		from {
+			width: 0%;
+		}
+		to {
+			width: 100%;
+		}
+		
+	}
+
+	@keyframes distort-2 {
+		0%,
+		100% {
+			transform: translate(0, 0) skew(0deg);
+		}
+		20% {
+			transform: translate(0, 0) skew(0deg);
+		}
+		40% {
+			transform: translate(0, 0) skew(0deg);
+		}
+		60% {
+			transform: translate(0, 0) skew(0deg);
+		}
+
+		21% {
+			transform: translate(2px, -1px) skew(-10deg);
+		}
+		22% {
+			transform: translate(-2px, 1px) skew(10deg);
+		}
+
+		41% {
+			transform: translate(0px, -2px) skew(-5deg);
+		}
+		42% {
+			transform: translate(0px, 2px) skew(5deg);
+		}
+
+		61% {
+			transform: translate(-2px, 0px);
+		}
+		62% {
+			transform: translate(2px, 0px);
+		}
+
+		85% {
+			transform: translate(2px, 2px) skew(-15deg);
+		}
+		86% {
+			transform: translate(-2px, -2px) skew(15deg);
+		}
+	}
 }
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
@@ -167,6 +224,26 @@
 			--nag-stripe: rgba(241, 244, 0, 0.7);
 			--nag-bg: color-mix(in srgb, var(--color-bg) 50%, transparent 50%);
 		}
+	}
+
+	.outOfSyncText {
+		position: relative;
+	}
+
+	.outOfSyncText::before {
+		content: attr(data-text);
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		opacity: 0.5;
+		z-index: -1;
+		color: var(--color-primary);
+		animation: var(--animate-distort-2);
 	}
 
 	.linearCRTGradient {

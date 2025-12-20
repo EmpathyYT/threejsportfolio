@@ -1,7 +1,8 @@
 import {
-	cleanScene,
+	fullCleanup,
 	removeTextFromHitMarker,
 	setUpToolTips,
+	wait,
 } from "../utils/extra";
 import { hitboxesActive } from "../components/hitboxSetup";
 import {
@@ -11,6 +12,7 @@ import {
 	turnOffPc,
 } from "../utils/pcUitls";
 import pagingInstance from "../paging/pagingController.js";
+import scrambleCode from "../utils/wordScrambler.js";
 import * as THREE from "three";
 
 const raycaster = new THREE.Raycaster();
@@ -31,46 +33,81 @@ export function setUpHooks(
 	dummyCamera,
 	scene,
 	renderer,
-	mouse
+	mouse,
+    storedListeners = {}
 ) {
-	preloadHooks();
-	window.addEventListener(
-		"resize",
-		() => window.existingResizeHandler(camera, renderer),
-		false
-	);
-	window.addEventListener(
-		"click",
-		(event) => window.existingClickHandler(event, controls, renderer),
-		false
-	);
-	document.addEventListener("click", () => controlLockHook(controls));
-	document.addEventListener("beforeunload", () => cleanScene(scene));
-	window.addEventListener("toggle-desktop", () =>
-		handleChangeDesktopMode(camera, dummyCamera, controls)
-	);
-	window.addEventListener("mousemove", (mouseEvent) =>
-		trackMousePosition(mouseEvent, mouse,)
-	);
+    // If storedListeners has content, clean it first just in case
+	cleanHooks(storedListeners); 
+
+	storedListeners.resize = () => window.existingResizeHandler(camera, renderer);
+	storedListeners.click = (event) => window.existingClickHandler(event, controls, renderer);
+	storedListeners.controlLock = () => controlLockHook(controls);
+	storedListeners.beforeUnload = () => fullCleanup(scene, renderer, controls);
+	storedListeners.toggleDesktop = () => handleChangeDesktopMode(camera, dummyCamera, controls);
+	storedListeners.mousemove = (mouseEvent) => trackMousePosition(mouseEvent, mouse);
+	storedListeners.loaded = () => finishedLoading();
+
+	window.addEventListener("resize", storedListeners.resize, false);
+	window.addEventListener("click", storedListeners.click, false);
+	document.addEventListener("click", storedListeners.controlLock);
+	document.addEventListener("beforeunload", storedListeners.beforeUnload);
+	window.addEventListener("toggle-desktop", storedListeners.toggleDesktop);
+	window.addEventListener("mousemove", storedListeners.mousemove);
+	window.addEventListener('threejs-loaded', storedListeners.loaded);
+	
 	handleXButtonInSlide();
+    
+    return storedListeners;
 }
 
-function preloadHooks() {
+async function finishedLoading() {
+	const el = document.getElementById('loading-screen');
+	el.classList.add('opacity-0');
+	await wait(800);
+	el.remove();
+	showToast();
+}
+
+async function showToast() {
+	await wait(1500);
+	document.getElementById('toast').classList.remove('translate-x-full')
+	document.getElementById('countdown').classList.add('animate-toast');
+	await wait(400);
+	scrambleCode('You are here to leak redacted data. Make it quick.', 'transmission')
+	document.getElementById('countdown').addEventListener('animationend', (event) => {
+		const toast = event.target.parentElement;
+		toast.classList.add('translate-x-full'); 
+		
+		setTimeout(() => toast.remove(), 800); 
+	});
+}
+
+export function cleanHooks(listenersToClean) {
 	if (window.existingLoopId) {
 		cancelAnimationFrame(window.existingLoopId);
 	}
+
+    if (hookData.abortBoot) {
+        hookData.abortBoot.abort();
+        hookData.abortBoot = null;
+    }
 
 	const oldCanvas = document.querySelector("canvas");
 	if (oldCanvas) {
 		oldCanvas.remove();
 	}
 
-	if (window.existingResizeHandler) {
-		window.removeEventListener("resize", window.existingResizeHandler);
-	}
-	if (window.existingClickHandler) {
-		window.removeEventListener("click", window.existingClickHandler);
-	}
+    if (listenersToClean) {
+        if (listenersToClean.resize) window.removeEventListener("resize", listenersToClean.resize);
+        if (listenersToClean.click) window.removeEventListener("click", listenersToClean.click);
+        if (listenersToClean.controlLock) document.removeEventListener("click", listenersToClean.controlLock);
+        if (listenersToClean.beforeUnload) document.removeEventListener("beforeunload", listenersToClean.beforeUnload);
+        if (listenersToClean.toggleDesktop) window.removeEventListener("toggle-desktop", listenersToClean.toggleDesktop);
+        if (listenersToClean.mousemove) window.removeEventListener("mousemove", listenersToClean.mousemove);
+        if (listenersToClean.loaded) window.removeEventListener("threejs-loaded", listenersToClean.loaded);
+        // Clear properties
+        for (const key in listenersToClean) delete listenersToClean[key];
+    }
 }
 
 window.existingResizeHandler = function (camera, renderer) {

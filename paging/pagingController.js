@@ -47,7 +47,7 @@ async function setUpScrambler(pageId) {
 	if (pageId === "About Me") {
 		await wait(450);
 		scrambleCode(
-			"In a world where everything is locked behind a micro transaction, people yearn for safety and silence. My mission is to bring that back to reality.",
+			"In a world where everything is locked behind a micro transaction, people yearn for safety and silence. His mission is to bring that back to reality.",
 			"bio"
 		);
 	} else {
@@ -58,7 +58,7 @@ async function setUpScrambler(pageId) {
 }
 
 function setUpFlipper() {
-	flipper("redacted", 2500, "[ REDACTED ]", "[ CLASSIFIED ]", "[ 0x_DENIED ]");
+	flipper("redacted", 2500, "CORRUPTED", "UNKNOWN", "0x_ERROR");
 }
 
 function createPage(pageName) {

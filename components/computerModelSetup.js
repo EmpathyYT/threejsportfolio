@@ -1,4 +1,4 @@
-import { wait, setCanvasSizes } from "../utils/extra.js";
+import { wait, setCanvasSizes, applyTextureRelease } from "../utils/extra.js";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
 import {
 	bootSequence,
@@ -7,18 +7,18 @@ import {
 } from "../constants/constants.js";
 import setUpHitBoxes, {toggleButtonVisibility } from "./hitboxSetup.js";
 import * as THREE from "three";
-import * as lil from "lil-gui";
 let screenMeshMaterial;
 
-export default function setUpComputerModel(scene) {
-	const loader = new GLTFLoader();
+export default function setUpComputerModel(scene, manager) {
+	const loader = new GLTFLoader(manager);
 	loader.load("models/personal_computer/pc.glb", function (gltf) {
 		const computer = gltf.scene.children[0];
 		computer.name = computerModelName;
-		computer.position.set(0, 0.2, 1.2);
-		computer.rotation.z = Math.PI;
+		computer.position.set(-7.9, 0.35, -1.87);
+		computer.rotation.z = -Math.PI /2;
 
 		scene.add(computer);
+		applyTextureRelease(computer);
 
 		computer.traverse((x) => {
 			if (x.isMesh && x.material.name === "Screen") {
@@ -62,8 +62,8 @@ export async function setUpBootText() {
 	const abortBoot = new AbortController();
 
 	texture.needsUpdate = true;
-	// bootTextGenerator(texture, context, canvas, abortBoot);
-	setUpDesktop(abortBoot)
+	bootTextGenerator(texture, context, canvas, abortBoot);
+	// setUpDesktop(abortBoot)
 	return [abortBoot, screenMeshMaterial];
 }
 
@@ -131,11 +131,11 @@ async function loadScreenOS(context, canvas, texture, abortBoot) {
 
 	resetCanvas(canvas);
 	context.fillStyle = "white";
-	let text = "Loading BootOS...";
+	let text = "Loading StrikeOS...";
 	let textWidth = context.measureText(text).width;
 	context.textAlign = "center";
 	context.fillText(text, canvas.width / 2, canvas.height / 2);
-	context.strokeStyle = "blue";
+	context.strokeStyle = "cyan";
 	context.lineWidth = 5;
 	context.strokeRect(
 		canvas.width / 2 - textWidth / 2,
@@ -144,7 +144,7 @@ async function loadScreenOS(context, canvas, texture, abortBoot) {
 		80
 	);
 	texture.needsUpdate = true;
-	context.fillStyle = "blue";
+	context.fillStyle = "cyan";
 	let width = 0;
 	for (let i = 1; i <= 10; i++) {
 		await wait(500 * Math.random());

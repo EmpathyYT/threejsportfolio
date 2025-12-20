@@ -23,7 +23,7 @@ export const monitorHeight = 1170;
 export const monitorPxSize = 90;
 export const computerModelName = 'computer';
 export const data = {
-	baseLocationVector: new THREE.Vector3(0, 0.75, 0),
-	desktopLocationVector: new THREE.Vector3(0, 0.7, 0.5),
-	desktopLookVector: new THREE.Vector3(0, 0.7, 1),
+	baseLocationVector: new THREE.Vector3(-8.97, 0.8, -1.95),
+	desktopLocationVector: new THREE.Vector3(-8.5, 0.8, -1.95),
+	desktopLookVector: new THREE.Vector3(-7.9, 0.8, -1.95),
 };

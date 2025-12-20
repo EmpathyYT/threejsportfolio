@@ -5,6 +5,13 @@ import { setTextToHitMarker } from "./extra";
 import { toggleButtonVisibility } from "../components/hitboxSetup";
 let cameraTween;
 
+export function cleanUtils() {
+    if (cameraTween) {
+        cameraTween.kill();
+        cameraTween = null;
+    }
+}
+
 export function moveCameraToPosition(
 	camera,
 	dummyCamera,

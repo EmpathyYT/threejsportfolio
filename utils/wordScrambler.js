@@ -1,66 +1,72 @@
-import {wait} from './extra';
+import { wait } from "./extra";
 
 const symbols = [
-		"!",
-		"@",
-		"#",
-		"$",
-		"%",
-		"^",
-		"&",
-		"*",
-		"(",
-		")",
-		"-",
-		"_",
-		"+",
-		"=",
-		"{",
-		"}",
-		"[",
-		"]",
-		"|",
-		"\\",
-		":",
-		";",
-		'"',
-		"'",
-		"<",
-		">",
-		",",
-		".",
-		"?",
-		"/",
-	];
+	"!",
+	"@",
+	"#",
+	"$",
+	"%",
+	"^",
+	"&",
+	"*",
+	"(",
+	")",
+	"-",
+	"_",
+	"+",
+	"=",
+	"{",
+	"}",
+	"[",
+	"]",
+	"|",
+	"\\",
+	":",
+	";",
+	'"',
+	"'",
+	"<",
+	">",
+	",",
+	".",
+	"?",
+	"/",
+];
 
 export default async function scrambleCode(finalText, id) {
-	const time = 1000 / finalText.length;
-
-	const state = {
-		finished: false,
-		letters: "",
-	}
-	
-	pasteScrambles(state, id, finalText.length);
-    for (let i = 0; i < finalText.length; i++) {
-        const letters = finalText.slice(0, i + 1);
-        state.letters = letters;
-		if (letters == finalText) state.finished = true;
-        await wait(time);
-    }
-}
-
-async function pasteScrambles(state, id, totalLength) {
 	const p = document.getElementById(id);
-	const text = state.letters;
+	if (!p) return;
 
-	let letters = [];
-	let index;
-	for (let j = 0; j < totalLength - state.letters.length; j++) {
-            index = Math.floor(Math.random() * symbols.length);
-            letters.push(symbols[index]);
-	}
-	p.textContent = text + letters.join('');
-	if (state.finished) return;
-	requestAnimationFrame(() => pasteScrambles(state, id, totalLength));
+	const duration = 1000; // Target duration in ms
+	const startTime = Date.now();
+
+	return new Promise((resolve) => {
+		function update() {
+			const now = Date.now();
+			const elapsed = now - startTime;
+			const progress = Math.min(elapsed / duration, 1);
+
+			const charsToShow = Math.floor(progress * finalText.length);
+			const revealedText = finalText.slice(0, charsToShow);
+
+			if (progress >= 1) {
+				p.textContent = finalText;
+				resolve();
+				return;
+			}
+
+			// Generate random chars for the rest
+			const remaining = finalText.length - charsToShow;
+			let scrambled = "";
+			for (let i = 0; i < remaining; i++) {
+				scrambled += symbols[Math.floor(Math.random() * symbols.length)];
+			}
+
+			p.textContent = revealedText + scrambled;
+
+			requestAnimationFrame(update);
+		}
+
+		requestAnimationFrame(update);
+	});
 }

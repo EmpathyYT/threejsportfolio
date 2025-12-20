@@ -22,9 +22,9 @@ export default function setUpScene(scene, renderer, controls, camera, dummyCamer
 	scene.add(hemiLight);
 	scene.add(dummyCamera);
 
-	camera.position.set(0, 0.75, 0);
+	camera.position.set(-8.97, 0.8, -1.95);
 	dummyCamera.lookAt(data.desktopLookVector);
 
 
-	camera.lookAt(0, 0.5, 0.9);
+	camera.lookAt(-7.9, 0.8, -1.87);
 }
