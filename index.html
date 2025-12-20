@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/threejsportfolio/icon.png">
+    <title>Basel Portfolio</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+    </style>
+    
+    <script>
+        if (window.innerWidth < 1024) {
+            window.location.href = 'access_denied.html';
+        }
+    </script>
+  <script type="module" crossorigin src="/threejsportfolio/assets/index-CO-9yvvt.js"></script>
+  <link rel="stylesheet" crossorigin href="/threejsportfolio/assets/index-B4zbHx6w.css">
+</head>
+
+<body class="overflow-hidden">
+    <div class="flex justify-center items-center h-screen w-screen overflow-hidden bg-bg duration-800 transition-all z-40 fixed top-0 left-0" id="loading-screen">
+        <div class="flex flex-col p-5 w-1/2 border border-bg-card bg-bg-surface">
+            <p class="text-center text-primary text-3xl font-mono" id="title">[ SYSTEM INITIALIZING ]</p>
+            <p class="text-text-muted font-mono pt-5 text-center text-sm" id="loading-text">> Loading resources</p>
+        </div>
+    </div>
+    <div id="hitmarker" class="flex flex-col items-center fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+        <div class="w-6 h-6 rounded-full border-2 border-primary flex items-center justify-center">
+            <div class="w-1 h-1 rounded-full bg-primary"></div>
+        </div>
+        <p class="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap text-center text-primary font-bold text-sm opacity-0 transition-opacity duration-300 pointer-events-none rounded-md mt-1 px-1" id="hitmarkerText">Somethiung</p>
+    </div>
+    
+    <div id="slide" class="flex flex-col justify-center items-center fixed size-full z-10 backdrop-blur-md translate-y-full transition-transform duration-800 ease-in-out">
+        <div class="flex absolute h-1/10 w-full items-end justify-center top-0 pb-5">
+            <div class="flex rounded-full border-2 border-primary text-text-main h-10 aspect-square justify-center items-center text-center p-2 font-bold text-xl bg-black/20 select-none cursor-pointer hover:bg-white/20 active:scale-90 transition duration-300" id="xButton">X</div>
+        </div>
+        <div id="pageContainer" class="w-7/10 h-8/10 bg-bg/80 overflow-y-auto overflow-x-hidden text-text-main linearCRTGradient">
+            <!-- page goes here -->
+        </div>
+    </div>
+    <div class="fixed bottom-0 right-0 flex flex-col p-5 w-1/4 border border-bg-card bg-bg-surface/90 transition-all duration-800 translate-x-full" id="toast">
+        <p class="text-center text-primary text-xl font-mono" id="title">// INCOMING TRANSMISSION</p>
+        <p class="text-text-muted font-mono pt-5 text-center text-sm" id="transmission"></p>
+        <div class="absolute bottom-0 left-0 bg-primary/80 h-1" id="countdown"></div>
+    </div>
+</body>
+</html> 
