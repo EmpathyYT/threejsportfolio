@@ -13,5 +13,21 @@ export const pageData = {
         ],
         source_btn: null,
         initialize: "unimplemented.html" //todo change this once u create a download link for the app
+    },
+    GymDesk: {
+        redacted: true,
+        title: "GymDesk",
+        short_bio: "Workout optimizer for desktop",
+        bio: "A completely local application that is used to optimize workout plans by using different mathematical equations derived from multiple crediable studies. It uses measurements like RPE, reps and sets to decide any issues present.",
+        stack: [
+            'TAURI',
+            'RUST/JS',
+            'FRONT-END',
+            'BACK-END',
+            'UI/UX'
+        ],
+        source_btn: null,
+        initialize: "unimplemented.html" //todo change this once u create a download link for the app
     }
+
 }
